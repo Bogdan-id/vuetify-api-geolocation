@@ -14,7 +14,7 @@
 						@blur="$v.ip.$touch()"
 					>
 					</v-text-field>
-					<v-btn small color="primary" class="mt-2 mb-2" @click="fetchQuery(); test()">{{ $t('button.getInfo') }}</v-btn>
+					<v-btn small color="primary" class="mt-2 mb-2" @click="fetchQuery()">{{ $t('button.getInfo') }}</v-btn>
 				</v-col>
 			</v-row>
 			<v-data-table
@@ -93,9 +93,6 @@ export default {
     },
   },
 	methods: {
-		test() {
-			console.log(this.$v.ip.ipAddress, this.$v.ip.$dirty)
-		},
 		applyIpMask() {
 			let el = document.getElementById('ip')
 			let event = new Event('input', {bubbles: true})
@@ -178,10 +175,7 @@ export default {
 		valPresent() {
 			return this.ipHistory[this.$t('title.lang')].length > 0
 		},
-		ipObj() {
-			let num = this.ipHistory[this.$t('title.lang')].length - 1
-			return this.ipHistory[this.$t('title.lang')][num]
-		},
+
 		ipTable() {
 			return [
 					{text: this.$t('table.ip'), value: 'ip'},
