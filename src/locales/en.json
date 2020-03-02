@@ -1,0 +1,29 @@
+{
+	"title": {
+		"header": "Geo location",
+		"lang": "en",
+		"ip": "IP address",
+		"result": "Result",
+		"history": "History"
+	},
+	"button": {
+		"getInfo": "Get information",
+		"clearHistory": "Clear history"
+	},
+	"table": {
+		"ip": "IP address",
+		"continent": "Continent/code",
+		"country": "Country/code",
+		"city": "City",
+		"postal": "Postcode",
+		"coordinates": "Coordinates"
+	},
+	"tableDesc": {
+		"noData": "No data available",
+		"row": "Rows per page:"
+	},
+	"input": {
+		"placeHolder": "enter ip",
+		"ivalidIp": "Invalid ip"
+	}
+}
