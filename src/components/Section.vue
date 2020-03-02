@@ -10,11 +10,11 @@
 						v-model="ip"
 						:placeholder="$t('input.placeHolder')"
 						:error-messages="ipError"
-						@input="applyIpMask()"
+						@input="applyIpMask(); $v.ip.$touch()"
 						@blur="$v.ip.$touch()"
 					>
 					</v-text-field>
-					<v-btn small color="primary" class="mt-2 mb-2" @click="fetchQuery()">{{ $t('button.getInfo') }}</v-btn>
+					<v-btn small color="primary" class="mt-2 mb-2" @click="fetchQuery(); test()">{{ $t('button.getInfo') }}</v-btn>
 				</v-col>
 			</v-row>
 			<v-data-table
@@ -93,6 +93,9 @@ export default {
     },
   },
 	methods: {
+		test() {
+			console.log(this.$v.ip.ipAddress, this.$v.ip.$dirty)
+		},
 		applyIpMask() {
 			let el = document.getElementById('ip')
 			let event = new Event('input', {bubbles: true})
@@ -122,19 +125,19 @@ export default {
 				el.dispatchEvent(event)
 			}
 		},
-		checkInput() {
-			this.ip == null 
-				? this.errors = true
-				: this.ip.replace(/[^\d]/g, '').length !== 10 
-				? this.errors = true
-				: this.errors = false
-		},
 		clearHistory() {
 			this.ipHistory.ru = []
 			this.ipHistory.en = []
 		},
 		fetchQuery(state) {
+			if(this.$v.ip.ipAddress && this.$v.ip.$dirty){
 			this.$apollo.queries.postIP.skip = state
+			} else {
+				let el = document.getElementById('ip')
+				el.value = '1.1.1.1'
+				let event = new Event('input', {bubbles: true})
+				el.dispatchEvent(event)
+			}
 		},
 		toggle() {
 			this.toggleLang = !this.toggleLang

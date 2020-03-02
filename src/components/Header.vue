@@ -1,7 +1,7 @@
 <template>
 <v-app-bar
 	app
-	color="blue lighten-2"
+	color="indigo"
 	dense
 	class="justify-space-around"
 >
