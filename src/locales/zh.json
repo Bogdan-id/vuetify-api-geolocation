@@ -1,0 +1,29 @@
+{
+	"title": {
+		"header": "地理位置",
+		"lang": "zh",
+		"ip": "IP地址",
+		"result": "結果",
+		"history": "歷史"
+	},
+	"button": {
+		"getInfo": "獲取信息",
+		"clearHistory": "清除歷史記錄"
+	},
+	"table": {
+		"ip": "IP地址",
+		"continent": "大陸/代碼",
+		"country": "國家代碼",
+		"city": "市",
+		"postal": "郵編",
+		"coordinates": "座標"
+	},
+	"tableDesc": {
+		"noData": "沒有可用數據",
+		"row": "每頁行數:"
+	},
+	"input": {
+		"placeHolder": "輸入ip",
+		"ivalidIp": "無效的IP"
+	}
+}

@@ -1,0 +1,29 @@
+{
+	"title": {
+		"header": "Geolocatie",
+		"lang": "de",
+		"ip": "Ip adres",
+		"result": "Resulteren",
+		"history": "Vraaggeschiedenis"
+	},
+	"button": {
+		"getInfo": "Informatie krijgen",
+		"clearHistory": "Geschiedenis wissen"
+	},
+	"table": {
+		"ip": "Ip adres",
+		"continent": "Continent/code",
+		"country": "Het land/code",
+		"city": "De stad",
+		"postal": "Postcode",
+		"coordinates": "Coördinaten"
+	},
+	"tableDesc": {
+		"noData": "Geen gegevens beschikbaar",
+		"row": "Kolommen per pagina:"
+	},
+	"input": {
+		"placeHolder": "voer ip in",
+		"ivalidIp": "Verkeerde ip"
+	}
+}

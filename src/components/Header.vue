@@ -33,7 +33,6 @@
 export default {
 	data: () => ({
 		langPanel: false,
-		lang: ['en', 'ru']
 	}),
 	methods: {
 		test() {
@@ -62,6 +61,9 @@ export default {
 		},
 		switchLang() {
 			return this.$store.dispatch('change_language', this.$t('title.lang'))
+		},
+		lang() {
+			return Object.keys(this.$i18n.messages)
 		}
 	},
 	mounted() {
