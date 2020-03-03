@@ -14,12 +14,19 @@
 						@blur="$v.ip.$touch()"
 					>
 					</v-text-field>
-					<v-btn small color="primary" class="mt-2 mb-2" @click="fetchQuery()">{{ $t('button.getInfo') }}</v-btn>
+					<span></span>
+					<v-btn 
+						small 
+						color="primary" 
+						class="mt-2 mb-2" 
+						@click="toggleLanguage()"
+						>{{ $t('button.getInfo') }}
+					</v-btn>
 				</v-col>
 			</v-row>
 			<v-data-table
-				:headers="ipTable"
-				:items="ipHistory[$t('title.lang')]"
+				:headers="ipTableHeader"
+				:items="ipHistory[interfaceLang]"
 				:items-per-page="5"
 				dense
 				class="elevation-1"
@@ -38,7 +45,6 @@
 	</v-row>
 </v-container>
 </v-content>
-
 </template>
 
 <script>
@@ -50,15 +56,10 @@ export default {
 	mixins: [validationMixin],
 	data: () => ({
 		ip: null,
-		// default api language
-		postIPLang: 'en',
-		toggleLang: false,
 		postIP: '',
-		errors: false,
-		ipHistory: {
-			ru: [],
-			en: [],
-		},
+		postIPLang: null,
+		currentIndex: 0,
+		ipHistory: {},
 	}),
 	apollo: {
 		postIP: {
@@ -93,57 +94,50 @@ export default {
     },
   },
 	methods: {
+		addIpHistoryLang() {
+			this.availableLang.forEach(v => {
+				this.$set(this.ipHistory, v, [])
+			})
+		},
 		applyIpMask() {
 			let el = document.getElementById('ip')
-			let event = new Event('input', {bubbles: true})
 			let numOctet = 4
 			let temp = el.value
 				.replace(/[^\d.]/g, '')
 				.replace(/[.]{2,3}/g, '.')
 			let find = temp.match(/\d{1,3}(?=\.)|\d{1,3}/g)
-			if(find != null) {
+			if (find != null) {
 				find = find.map(v => {
-					if(v > 255) return 255
+					if (v > 255) return 255
 					return v
 				})
 			}
-			if(find != null && find.length >= numOctet){
-				if(el.value !== find.slice(0, numOctet).join('.')) {
+			if (find != null && find.length >= numOctet){
+				if (el.value !== find.slice(0, numOctet).join('.')) {
 					el.value = find.slice(0, numOctet).join('.')
-					el.dispatchEvent(event)
+					el.dispatchEvent(this.inputEvent)
 				}
 			} else if(find != null && /\.$/.test(el.value)) {
 				if(el.value !== find.join('.') + '.'){
 					el.value = find.join('.') + '.'
-					el.dispatchEvent(event)
+					el.dispatchEvent(this.inputEvent)
 				}
 			} else if (find != null && el.value !== find.join('.')){
 				el.value = find.join('.')
-				el.dispatchEvent(event)
+				el.dispatchEvent(this.inputEvent)
 			}
 		},
 		clearHistory() {
-			this.ipHistory.ru = []
-			this.ipHistory.en = []
+			Object.keys(this.ipHistory).map(v => {
+				this.ipHistory[v] = []
+			})
 		},
-		fetchQuery(state) {
-			if(this.$v.ip.ipAddress && this.$v.ip.$dirty){
-			this.$apollo.queries.postIP.skip = state
-			} else {
-				let el = document.getElementById('ip')
-				el.value = '1.1.1.1'
-				let event = new Event('input', {bubbles: true})
-				el.dispatchEvent(event)
-			}
-		},
-		toggle() {
-			this.toggleLang = !this.toggleLang
-			return this.toggleLang ? 'ru' : 'en'
+		skipQuery(state, index) {
+				this.postIPLang = this.availableLang[index]
+				this.$apollo.queries.postIP.skip = state
 		},
 		createObject(v) {
-			// test value
 			let t = val => val != null 
-			// round value
 			let r = val => Math.round(val * 100) / 100
 			return {
 				'ip': v.ip,
@@ -154,29 +148,58 @@ export default {
 				'coordinates': `${t(v.latitude) ? r(v.latitude) + ' / ' + r(v.longitude) : '--'}`
 			}
 		},
-		chooseArrLang(val) {
-			switch(val.language) {
-				case 'en': this.ipHistory.en.push(this.createObject(val)); break
-				case 'ru': this.ipHistory.ru.push(this.createObject(val)); break
-			}
-			this.fetchQuery(true)
-			if(this.ipHistory.ru.length !== this.ipHistory.en.length){
-				this.postIPLang = this.toggle()
-				this.fetchQuery(false)
+		toggleLanguage() {
+			let indexes = this.availableLang.length - 1
+			if(this.inputValid){
+				if(this.currentIndex <= indexes){
+					this.skipQuery(false, this.currentIndex)
+					this.currentIndex ++
+				} else {
+					this.currentIndex = 0
+					this.postIPLang = null
+				}
+			} else {
+				let el = document.getElementById('ip')
+				el.value = '1.1.1.1'
+				el.dispatchEvent(this.inputEvent)
 			}
 		},
+		chooseArrLang(val) {
+			this.ipHistory[val.language] == null
+				? this.$set(this.ipHistory, val.language, [])
+				: false
+			this.ipHistory[val.language].push(this.createObject(val))
+			this.toggleLanguage()
+		},
 		checkValue(ip) {
+			this.$apollo.queries.postIP.skip = true
 			if(ip[0].ip != null){
 				this.chooseArrLang(ip[0])
 			}
 		},
 	},
 	computed: {
+		inputValid() {
+			return this.$v.ip.ipAddress && this.$v.ip.$dirty
+		},
+		availableLang() {
+			return Object.keys(this.$i18n.messages)
+		},
 		valPresent() {
 			return this.ipHistory[this.$t('title.lang')].length > 0
 		},
-
-		ipTable() {
+		inputEvent() {
+			return new Event('input', {bubbles: true})
+		},
+		interfaceLang() {
+			return this.$t('title.lang')
+		},
+		ipError() {
+			const errors = []
+			!this.$v.ip.ipAddress && errors.push(this.$t('input.ivalidIp'))
+			return errors
+		},
+		ipTableHeader() {
 			return [
 					{text: this.$t('table.ip'), value: 'ip'},
 					{text: this.$t('table.continent'), value: 'continent'},
@@ -184,24 +207,16 @@ export default {
 					{text: this.$t('table.city'), value: 'city'},
 					{text: this.$t('table.postal'), value: 'postCode'},
 					{text: this.$t('table.coordinates'), value: 'coordinates'}
-			]
+				]
 		},
-		lang() {
-			return this.$t('title.lang')
-		},
-		ipError() {
-			const errors = []
-			!this.$v.ip.ipAddress && errors.push(this.$t('input.ivalidIp'))
-			return errors
-		}
 	},
 	watch: {
 		postIP(val) {
-			val !== undefined 
+			val != null 
 				? this.checkValue(val) 
 				: false
 		},
-		lang() {
+		interfaceLang() {
 			let rowDescription = document.querySelector('.v-data-footer__select').firstChild
 			rowDescription.nodeValue = this.$t('tableDesc.row')
 			for (let key of document.getElementsByTagName("td")) {
@@ -211,6 +226,9 @@ export default {
 				}
 			}
 		}
+	},
+	created() {
+		this.addIpHistoryLang()
 	}
 }
 </script>
