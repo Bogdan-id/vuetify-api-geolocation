@@ -5,10 +5,12 @@ module.exports = {
   },
   'extends': [
     'plugin:vue/essential',
-    'eslint:recommended'
+    'eslint:recommended',
+    '@vue/typescript'
   ],
   parserOptions: {
-    parser: 'babel-eslint'
+		parser: '@typescript-eslint/parser',
+		ecmaVersion: 2015, ecmaFeatures: { legacyDecorators: true }
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
