@@ -4,7 +4,7 @@
 	color="indigo"
 	dense
 	class="justify-space-around"
->
+	>
 	<v-toolbar-title></v-toolbar-title>
 	<v-toolbar-title class="white--text">{{ $t('title.header') }}</v-toolbar-title>
 	<v-toolbar-title>
@@ -27,50 +27,36 @@
 	</v-toolbar-title>
 </v-app-bar>
 </template>
-<script>
-// import LangIcon from '../assets/lang-icon.vue'
+<script lang="ts">
+import { Component, Vue /* , Prop(if you use props) */ } from 'vue-property-decorator'
 
-export default {
-	data: () => ({
-		langPanel: false,
-	}),
-	methods: {
-		test() {
+/* You can add (imported) components to component below like @component({ components: { ,..yourComponent } }) */
+@Component 
+export default class Header extends Vue {
+	/* Props example */
+	// @Prop() readonly msg!: string
+	// https://blog.logrocket.com/how-to-write-a-vue-js-app-completely-in-typescript/
 
-		},
-		changeLang(val) {
-			this.$i18n.locale = val
-			this.switchLang
-		}
-	},
-	computed: {
-		langIcon() {
-			return this.langPanel ? 'lang-icon active' : 'not-active'
-		},
-		langMenu() {
-			return this.langPanel ? 'lang-panel active' : 'lang-panel'
-		},
-		currentLocale() {
-			return this.$i18n.locale
-		},
-		enColor() {
-			return this.currentLocale === 'en' ? 'color: #656BF2;' : ''
-		},
-		ruColor() {
-			return this.currentLocale === 'ru' ? 'color: #656BF2;' : ''
-		},
-		switchLang() {
-			return this.$store.dispatch('change_language', this.$t('title.lang'))
-		},
-		lang() {
-			return Object.keys(this.$i18n.messages)
-		}
-	},
+	/* data () => ({}) */
+	private langPanel = false
+
+	/* methods: {} */
+	changeLang(val: string): void {
+		this.$i18n.locale = val
+		// this.switchLang
+	}
+
+	/* computed: {} */
+	
+	// get switchLang() {
+	// 	return this.$store.dispatch('change_language', this.$t('title.lang'))
+	// }
+	get lang() {
+		return Object.keys(this.$i18n.messages)
+	}
 	mounted() {
-		this.switchLang
-	},
-	components: {
-	},
+		console.log(this.$t('title.header'))
+	}
 }
 </script>
 <style>

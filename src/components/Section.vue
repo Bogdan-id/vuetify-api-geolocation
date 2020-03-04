@@ -48,6 +48,7 @@
 </template>
 
 <script>
+// import { Component, Vue } from 'vue-property-decorator'
 import gql from 'graphql-tag'
 import { ipAddress } from 'vuelidate/lib/validators'
 import { validationMixin } from 'vuelidate'
@@ -100,9 +101,9 @@ export default {
 			})
 		},
 		applyIpMask() {
-			let el = document.getElementById('ip')
-			let numOctet = 4
-			let temp = el.value
+			const el = document.getElementById('ip')
+			const numOctet = 4
+			const temp = el.value
 				.replace(/[^\d.]/g, '')
 				.replace(/[.]{2,3}/g, '.')
 			let find = temp.match(/\d{1,3}(?=\.)|\d{1,3}/g)
@@ -137,8 +138,8 @@ export default {
 				this.$apollo.queries.postIP.skip = state
 		},
 		createObject(v) {
-			let t = val => val != null 
-			let r = val => Math.round(val * 100) / 100
+			const t = val => val != null 
+			const r = val => Math.round(val * 100) / 100
 			return {
 				'ip': v.ip,
 				'continent': `${t(v.continentName) ? v.continentName + '/' + v.continentCode : '--'}`,
@@ -149,7 +150,7 @@ export default {
 			}
 		},
 		toggleLanguage() {
-			let indexes = this.availableLang.length - 1
+			const indexes = this.availableLang.length - 1
 			if(this.inputValid){
 				if(this.currentIndex <= indexes){
 					this.skipQuery(false, this.currentIndex)
@@ -159,7 +160,7 @@ export default {
 					this.postIPLang = null
 				}
 			} else {
-				let el = document.getElementById('ip')
+				const el = document.getElementById('ip')
 				el.value = '1.1.1.1'
 				el.dispatchEvent(this.inputEvent)
 			}
@@ -217,9 +218,9 @@ export default {
 				: false
 		},
 		interfaceLang() {
-			let rowDescription = document.querySelector('.v-data-footer__select').firstChild
+			const rowDescription = document.querySelector('.v-data-footer__select').firstChild
 			rowDescription.nodeValue = this.$t('tableDesc.row')
-			for (let key of document.getElementsByTagName("td")) {
+			for (const key of document.getElementsByTagName("td")) {
 				// eslint-disable-next-line
 				if(key.textContent === 'No data available' || 'Нет данных' && !this.valPresent) {
 					key.firstChild.nodeValue = this.$t('tableDesc.noData')

@@ -8,12 +8,12 @@ export default new Vuex.Store({
 		language: null,
   },
   mutations: {
-		change_language(state, value) {
+		changeLanguage(state, value) {
 			state.language = value
 		}
   },
   actions: {
-		change_language({commit}, value) {
+		changeLanguage({commit}, value) {
 			commit('change_language', value)
 		}
 	}
