@@ -41,7 +41,7 @@ export default class Header extends Vue {
 	private langPanel = false
 
 	/* methods: {} */
-	changeLang(val: string): void {
+	public changeLang(val: string): void {
 		this.$i18n.locale = val
 		// this.switchLang
 	}
@@ -56,6 +56,7 @@ export default class Header extends Vue {
 	}
 	mounted() {
 		console.log(this.$t('title.header'))
+		console.log(this.$v)
 	}
 }
 </script>

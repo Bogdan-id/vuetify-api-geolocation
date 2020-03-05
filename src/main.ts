@@ -4,9 +4,11 @@ import store from './store'
 import { createProvider } from './vue-apollo'
 import i18n from './i18n'
 import vuetify from './plugins/vuetify'
-import Vuelidate from 'vuelidate'
+import vuelidate from 'vuelidate'
 
-Vue.use(Vuelidate)
+console.log(i18n)
+console.log(vuelidate)
+Vue.use(vuelidate)
 
 Vue.config.productionTip = true
 
