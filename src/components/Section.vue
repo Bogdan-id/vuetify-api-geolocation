@@ -48,20 +48,18 @@
 </template>
 
 <script>
-// import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import gql from 'graphql-tag'
 import { ipAddress } from 'vuelidate/lib/validators'
 import { validationMixin } from 'vuelidate'
 
-export default {
-	mixins: [validationMixin],
-	data: () => ({
-		ip: null,
-		postIP: '',
-		postIPLang: null,
-		currentIndex: 0,
-		ipHistory: {},
-	}),
+export default class Section extends Vue {
+	// mixins: [validationMixin],
+	private ip: number | null = null
+	private postIP: string =  ''
+	private postIPLang: string | null =  null
+	private currentIndex: number = 0
+	ipHistory: {},
 	apollo: {
 		postIP: {
 			query: gql`query rundomFunc($ip: String!, $lang: String!) {
