@@ -54,10 +54,6 @@ export default class Header extends Vue {
 	get lang() {
 		return Object.keys(this.$i18n.messages)
 	}
-	mounted() {
-		console.log(this.$t('title.header'))
-		console.log(this.$v)
-	}
 }
 </script>
 <style>

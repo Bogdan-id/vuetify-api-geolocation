@@ -47,7 +47,7 @@
 </v-content>
 </template>
 
-<script>
+<script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import gql from 'graphql-tag'
 import { ipAddress } from 'vuelidate/lib/validators'
@@ -89,11 +89,14 @@ import { validationMixin } from 'vuelidate'
 	}
 })
 export default class Section extends Vue {
-	ip = null
-	postIP = ''
-	postIPLang = null
-	currentIndex = 0
-	ipHistory = {}
+	// data 
+
+	ip: string | null = null
+	postIP: object | string = ''
+	postIPLang: null | string = null
+	currentIndex: 0
+	ipHistory: object = {}
+
 	addIpHistoryLang() {
 		this.availableLang.forEach(v => {
 			this.$set(this.ipHistory, v, [])
