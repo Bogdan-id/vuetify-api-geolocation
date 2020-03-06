@@ -54,15 +54,13 @@ import { ipAddress } from 'vuelidate/lib/validators'
 import { validationMixin } from 'vuelidate'
 
 @Component({
-	mixins:[validationMixin]
-})
-export default class Section extends Vue {
-	ip = null
-	postIP = ''
-	postIPLang = null
-	currentIndex = 0
-	ipHistory = {}
-	apollo = {
+	mixins:[validationMixin],
+	validations: {
+    ip: {
+      ipAddress,
+    }
+	},
+	apollo: {
 		postIP: {
 			query: gql`query rundomFunc($ip: String!, $lang: String!) {
 				postIP(ip: $ip, lang: $lang) {
@@ -89,11 +87,13 @@ export default class Section extends Vue {
 			},
 		}
 	}
-	validations = {
-    ip: {
-      ipAddress,
-    }
-  }
+})
+export default class Section extends Vue {
+	ip = null
+	postIP = ''
+	postIPLang = null
+	currentIndex = 0
+	ipHistory = {}
 	addIpHistoryLang() {
 		this.availableLang.forEach(v => {
 			this.$set(this.ipHistory, v, [])
@@ -227,9 +227,6 @@ export default class Section extends Vue {
 	}
 	created () {
 		this.addIpHistoryLang()
-	}
-	mounted () {
-		console.log(this.$v)
 	}
 }
 </script>
