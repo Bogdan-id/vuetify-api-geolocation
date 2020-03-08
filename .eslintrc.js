@@ -10,7 +10,10 @@ module.exports = {
   ],
   parserOptions: {
 		parser: '@typescript-eslint/parser',
-		ecmaVersion: 2015, ecmaFeatures: { legacyDecorators: true }
+		ecmaVersion: 2015, ecmaFeatures: { 
+			legacyDecorators: true,
+			// jsx: true
+		}
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
