@@ -33,7 +33,7 @@
 			></v-data-table>
 			<div class="d-flex justify-end">
 				<v-btn 
-					@click="clearHistory()"
+					@click="addIpHistoryLang()"
 					:disabled="!valPresent"
 					class="ma-2"
 					color="error"

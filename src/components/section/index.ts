@@ -3,6 +3,27 @@ import gql from 'graphql-tag'
 import { ipAddress } from 'vuelidate/lib/validators'
 import { validationMixin } from 'vuelidate'
 
+interface IpObject {
+	ip: string;
+	continent: string;
+	country: string;
+	city: string;
+	postCode: string;
+	coordinates: string;
+}
+interface RowIpObject {
+	language: string;
+	ip: string;
+	countryCode: string;
+	countryName: string;
+	continentCode: string;
+	continentName: string;
+	city: string;
+	postCode: string;
+	latitude: number;
+	longitude: number;
+}
+
 @Component({
 	mixins:[validationMixin],
 	validations: {
@@ -44,60 +65,58 @@ export default class Section extends Vue {
 	public postIP: object | string = ''
 	public postIPLang: null | string = null
 	public currentIndex = 0
-	public ipHistory: object = {}
+	public ipHistory: object = new Object()
 
-	addIpHistoryLang() {
-		this.availableLang.forEach(v => {
+	addIpHistoryLang(): void {
+		this.availableLang.forEach((v: string) => {
 			this.$set(this.ipHistory, v, [])
 		})
 	}
-	applyIpMask() {
-		const el: object = document.getElementById('ip')
+	applyIpMask(): void {
+		const el: HTMLInputElement = document.getElementById('ip') as HTMLInputElement
 		const numOctet = 4
-		const temp = el.value
-			.replace(/[^\d.]/g, '')
-			.replace(/[.]{2,3}/g, '.')
-		let find = temp.match(/\d{1,3}(?=\.)|\d{1,3}/g)
-		if (find != null) {
-			find = find.map(v => {
-				if (v > 255) return 255
-				return v
-			})
-		}
-		if (find != null && find.length >= numOctet){
-			if (el.value !== find.slice(0, numOctet).join('.')) {
-				el.value = find.slice(0, numOctet).join('.')
+		if(el) {
+			const temp = el.value
+				.replace(/[^\d.]/g, '')
+				.replace(/[.]{2,3}/g, '.')
+			const find: RegExpMatchArray | null = temp.match(/\d{1,3}(?=\.)|\d{1,3}/g)
+			let arr: Array<string> = []
+			if (find) {
+				arr = find.map(v => {
+					if (parseInt(v) > 255) return '255'
+					return v
+				})
+			}
+			if (arr && arr.length >= numOctet){
+				if (el.value !== arr.slice(0, numOctet).join('.')) {
+					el.value = arr.slice(0, numOctet).join('.')
+					el.dispatchEvent(this.inputEvent)
+				}
+			} else if(arr && /\.$/.test(el.value)) {
+				if(el.value !== arr.join('.') + '.'){
+					el.value = arr.join('.') + '.'
+					el.dispatchEvent(this.inputEvent)
+				}
+			} else if (arr != null && el.value !== arr.join('.')){
+				el.value = arr.join('.')
 				el.dispatchEvent(this.inputEvent)
 			}
-		} else if(find != null && /\.$/.test(el.value)) {
-			if(el.value !== find.join('.') + '.'){
-				el.value = find.join('.') + '.'
-				el.dispatchEvent(this.inputEvent)
-			}
-		} else if (find != null && el.value !== find.join('.')){
-			el.value = find.join('.')
-			el.dispatchEvent(this.inputEvent)
 		}
-	}
-	clearHistory() {
-		Object.keys(this.ipHistory).map(v => {
-			this.ipHistory[v] = []
-		})
 	}
 	skipQuery(state: boolean, index: number) {
 			this.postIPLang = this.availableLang[index]
 			this.$apollo.queries.postIP.skip = state
 	}
-	createObject(v) {
-		const t = val => val != null 
-		const r = val => Math.round(val * 100) / 100
+	createObject(v: RowIpObject): IpObject {
+		const t = (val: string | null): boolean => val != null 
+		const r = (val: number): string => {return (Math.round(val * 100) / 100).toString()}
 		return {
-			'ip': v.ip,
-			'continent': `${t(v.continentName) ? v.continentName + '/' + v.continentCode : '--'}`,
-			'country': `${t(v.countryName) ? v.countryName + '/' + v.countryCode : '--'}`,
-			'city': `${t(v.city) ? v.city : '--'}`,
-			'postCode': `${t(v.postCode) ? v.postCode : '--'}`,
-			'coordinates': `${t(v.latitude) ? r(v.latitude) + ' / ' + r(v.longitude) : '--'}`
+			ip: v.ip,
+			continent: `${t(v.continentName) ? v.continentName + '/' + v.continentCode : '--'}`,
+			country: `${t(v.countryName) ? v.countryName + '/' + v.countryCode : '--'}`,
+			city: `${t(v.city) ? v.city : '--'}`,
+			postCode: `${t(v.postCode) ? v.postCode : '--'}`,
+			coordinates: `${t((v.latitude).toString()) ? r(v.latitude) + ' / ' + r(v.longitude) : '--'}`
 		}
 	}
 	toggleLanguage() {
@@ -111,32 +130,35 @@ export default class Section extends Vue {
 				this.postIPLang = null
 			}
 		} else {
-			const el = document.getElementById('ip')
+			const el = document.getElementById('ip') as HTMLInputElement
 			el.value = '1.1.1.1'
 			el.dispatchEvent(this.inputEvent)
 		}
 	}
-	chooseArrLang(val) {
-		this.ipHistory[val.language] == null
-			? this.$set(this.ipHistory, val.language, [])
-			: false
+	chooseArrLang(val: RowIpObject): void {
+		// eslint-disable-next-line
+		this.ipHistory.hasOwnProperty(val.language)
+			? false
+			: this.$set(this.ipHistory, val.language, [])
 		this.ipHistory[val.language].push(this.createObject(val))
+		console.log(this.ipHistory)
 		this.toggleLanguage()
 	}
-	checkValue(ip) {
+	checkValue(ip: any) {
 		this.$apollo.queries.postIP.skip = true
 		if (ip[0].ip != null) {
 			this.chooseArrLang(ip[0])
 		}
 	}
 
-	get inputValid () {
-		return this.$v.ip.ipAddress && this.$v.ip.$dirty
+	get inputValid (): boolean {
+		if(this.$v.ip) return this.$v.ip.ipAddress && this.$v.ip.$dirty
+		return false
 	}
 	get availableLang () {
 		return Object.keys(this.$i18n.messages)
 	}
-	get valPresent () {
+	get valPresent (): boolean {
 		return this.ipHistory[this.$t('title.lang')].length > 0
 	}
 	get inputEvent () {
@@ -145,11 +167,14 @@ export default class Section extends Vue {
 	get interfaceLang () {
 		return this.$t('title.lang')
 	}
-	get ipError () {
+	get ipError (): string[] {
 		const errors = []
-		!this.$v.ip.ipAddress && errors.push(this.$t('input.ivalidIp'))
+		if(this.$v.ip) {
+			!this.$v.ip.ipAddress && errors.push(this.$t('input.ivalidIp').toString())
+		}
 		return errors
 	}
+	// Record<K, T> (K - key, T - value)
 	get ipTableHeader () {
 		return [
 				{text: this.$t('table.ip'), value: 'ip'},
@@ -161,19 +186,23 @@ export default class Section extends Vue {
 			]
 	}
 	@Watch('postIP')
-	changePostIP(val) {
+	changePostIP(val: Record<string, object>): void {
+		console.log(val)
 		val != null 
 				? this.checkValue(val) 
 				: false
 	}
 	@Watch('interfaceLang')
-	changeInterface() {
-		const rowDescription = document.querySelector('.v-data-footer__select').firstChild
-		rowDescription.nodeValue = this.$t('tableDesc.row')
-		for (const key of document.getElementsByTagName("td")) {
-			// eslint-disable-next-line
-			if(key.textContent === 'No data available' || 'Нет данных' && !this.valPresent) {
-				key.firstChild.nodeValue = this.$t('tableDesc.noData')
+	changeInterface(): void {
+		const rowDescription: HTMLElement = document.querySelector('.v-data-footer__select') as HTMLElement
+		if(rowDescription && rowDescription.firstChild){
+			rowDescription.firstChild.nodeValue = this.$t('tableDesc.row').toString()
+			for (const key of document.getElementsByTagName("td")) {
+				if(key.firstChild){
+					if(key.textContent === 'No data available' || 'Нет данных' && !this.valPresent) {
+						key.firstChild.nodeValue = this.$t('tableDesc.noData').toString()
+					}
+				}
 			}
 		}
 	}

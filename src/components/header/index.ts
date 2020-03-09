@@ -8,7 +8,7 @@ export default class Header extends Vue {
 	// https://blog.logrocket.com/how-to-write-a-vue-js-app-completely-in-typescript/
 
 	/* data () => ({}) */
-	private langPanel = false
+	// private langPanel = false
 
 	/* methods: {} */
 	public changeLang(val: string): void {
