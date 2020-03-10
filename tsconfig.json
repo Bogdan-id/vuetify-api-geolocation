@@ -14,7 +14,8 @@
 		"downlevelIteration": true,
 
     "types": [
-			"webpack-env"
+			"webpack-env",
+			"vuetify"
 		],
 		
     "paths": {

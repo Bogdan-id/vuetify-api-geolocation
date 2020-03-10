@@ -65,7 +65,7 @@ export default class Section extends Vue {
 	public postIP: object | string = ''
 	public postIPLang: null | string = null
 	public currentIndex = 0
-	public ipHistory: object = new Object()
+	public ipHistory: any = {}
 
 	addIpHistoryLang(): void {
 		this.availableLang.forEach((v: string) => {
@@ -159,7 +159,7 @@ export default class Section extends Vue {
 		return Object.keys(this.$i18n.messages)
 	}
 	get valPresent (): boolean {
-		return this.ipHistory[this.$t('title.lang')].length > 0
+		return this.ipHistory[(this.$t('title.lang')).toString()].length > 0
 	}
 	get inputEvent () {
 		return new Event('input', {bubbles: true})
@@ -208,5 +208,8 @@ export default class Section extends Vue {
 	}
 	created () {
 		this.addIpHistoryLang()
+	}
+	mounted() {
+		console.log(this.$i18n)
 	}
 }
