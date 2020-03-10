@@ -18,7 +18,7 @@
 					<v-btn 
 						small 
 						color="primary" 
-						class="mt-2 mb-2" 
+						class="mt-2 mb-2"
 						@click="toggleLanguage()"
 						>{{ $t('button.getInfo') }}
 					</v-btn>

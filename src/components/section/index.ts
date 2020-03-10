@@ -207,4 +207,13 @@ export default class Section extends Vue {
 	created () {
 		this.addIpHistoryLang()
 	}
+	mounted () {
+		const callToggleLang = () => this.toggleLanguage()
+		const el = document.getElementById('ip') as HTMLInputElement
+		el.addEventListener('keypress', function (e) {
+				if (e.key === 'Enter') {
+					callToggleLang()
+				}
+		})
+	}
 }
