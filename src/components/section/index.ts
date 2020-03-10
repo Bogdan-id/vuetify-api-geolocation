@@ -141,7 +141,6 @@ export default class Section extends Vue {
 			? false
 			: this.$set(this.ipHistory, val.language, [])
 		this.ipHistory[val.language].push(this.createObject(val))
-		console.log(this.ipHistory)
 		this.toggleLanguage()
 	}
 	checkValue(ip: any) {
@@ -187,7 +186,6 @@ export default class Section extends Vue {
 	}
 	@Watch('postIP')
 	changePostIP(val: Record<string, object>): void {
-		console.log(val)
 		val != null 
 				? this.checkValue(val) 
 				: false
@@ -208,8 +206,5 @@ export default class Section extends Vue {
 	}
 	created () {
 		this.addIpHistoryLang()
-	}
-	mounted() {
-		console.log(this.$i18n)
 	}
 }
