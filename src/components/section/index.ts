@@ -108,7 +108,7 @@ export default class Section extends Vue {
 			this.$apollo.queries.postIP.skip = state
 	}
 	createObject(v: RowIpObject): IpObject {
-		const t = (val: string | null): boolean => val != null 
+		const t = (val: string | null | number): boolean => val != null 
 		const r = (val: number): string => {return (Math.round(val * 100) / 100).toString()}
 		return {
 			ip: v.ip,
@@ -116,7 +116,7 @@ export default class Section extends Vue {
 			country: `${t(v.countryName) ? v.countryName + '/' + v.countryCode : '--'}`,
 			city: `${t(v.city) ? v.city : '--'}`,
 			postCode: `${t(v.postCode) ? v.postCode : '--'}`,
-			coordinates: `${t((v.latitude).toString()) ? r(v.latitude) + ' / ' + r(v.longitude) : '--'}`
+			coordinates: `${t(v.latitude) ? r(v.latitude) + ' / ' + r(v.longitude) : '--'}`
 		}
 	}
 	toggleLanguage() {
